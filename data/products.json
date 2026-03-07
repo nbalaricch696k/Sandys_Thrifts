@@ -1,0 +1,61 @@
+[
+  {
+    "id": "shirt-001",
+    "name": "Classic White Tee",
+    "price": 19.99,
+    "description": "Soft cotton tee with a regular fit.",
+    "image": "https://images.unsplash.com/photo-1541099649105-f69ad21f3246?w=800&q=80",
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "colors": [
+      "White",
+      "Black"
+    ]
+  },
+  {
+    "id": "jeans-001",
+    "name": "Slim Denim Jeans",
+    "price": 49.99,
+    "description": "Comfort stretch slim-fit jeans.",
+    "image": "https://images.unsplash.com/photo-1521335629791-ce4aec67dd47?w=800&q=80",
+    "sizes": [
+      "28",
+      "30",
+      "32",
+      "34",
+      "36"
+    ],
+    "colors": [
+      "Blue"
+    ]
+  },
+  {
+    "id": "jacket-001",
+    "name": "Lightweight Jacket",
+    "price": 69.99,
+    "description": "Wind-resistant jacket for everyday wear.",
+    "image": "https://images.unsplash.com/photo-1520975912733-8f3b5b8a8d3a?w=800&q=80",
+    "sizes": [
+      "S",
+      "M",
+      "L"
+    ],
+    "colors": [
+      "Olive",
+      "Black"
+    ]
+  },
+  {
+    "name": "fkgmgml;g",
+    "price": 647,
+    "description": "fjprr",
+    "image": "prpv",
+    "sizes": [],
+    "colors": [],
+    "id": "1771988109679"
+  }
+]

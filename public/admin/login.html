@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Admin Login - Sandy's Thrifts</title>
+    <link rel="stylesheet" href="../styles.css" />
+    <style>
+      .login-container {
+        max-width: 400px;
+        margin: 60px auto;
+        padding: 2rem;
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      }
+      .login-container h2 {
+        text-align: center;
+        margin-bottom: 0.5rem;
+        color: #2c3e50;
+      }
+      .login-container p {
+        text-align: center;
+        color: #666;
+        margin-bottom: 2rem;
+        font-size: 0.9rem;
+      }
+      .error {
+        background: #f8d7da;
+        color: #721c24;
+        padding: 0.75rem;
+        border-radius: 4px;
+        margin-bottom: 1rem;
+        display: none;
+      }
+      .error.show {
+        display: block;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="login-container">
+      <h2>Sandy's Thrifts Admin</h2>
+      <p>Sign in to manage your store</p>
+      
+      <div id="error" class="error"></div>
+      
+      <form id="loginForm">
+        <div style="margin-bottom: 1rem;">
+          <input id="username" type="text" placeholder="Username" required />
+        </div>
+        <div style="margin-bottom: 1.5rem;">
+          <input id="password" type="password" placeholder="Password" required />
+        </div>
+        <button type="submit" class="btn btn-primary">Login</button>
+      </form>
+      
+      <p style="margin-top: 1.5rem; font-size: 0.8rem; color: #999;">
+        Default credentials: admin / admin
+      </p>
+    </div>
+
+    <script>
+      document.getElementById('loginForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const username = document.getElementById('username').value;
+        const password = document.getElementById('password').value;
+        const errorEl = document.getElementById('error');
+        
+        // Create basic auth header
+        const auth = 'Basic ' + btoa(username + ':' + password);
+        
+        try {
+          // Test authentication by accessing a protected endpoint
+          const response = await fetch('/api/admin/orders', {
+            headers: {
+              'Authorization': auth
+            }
+          });
+          
+          if (response.ok) {
+            // Store credentials in session storage for later use
+            sessionStorage.setItem('adminAuth', auth);
+            // Redirect to dashboard
+            window.location.href = '/admin/dashboard';
+          } else if (response.status === 401) {
+            errorEl.textContent = 'Invalid username or password';
+            errorEl.classList.add('show');
+          } else {
+            throw new Error('Server error');
+          }
+        } catch (error) {
+          errorEl.textContent = 'Login failed: ' + error.message;
+          errorEl.classList.add('show');
+        }
+      });
+    </script>
+  </body>
+</html>

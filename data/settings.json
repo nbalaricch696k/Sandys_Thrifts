@@ -1,0 +1,15 @@
+{
+  "storeName": "Sandy's Thrifts",
+  "storeTagline": "Quality pieces at thrift prices",
+  "adminUsername": "admin",
+  "adminPassword": "admin",
+  "contactEmail": "contact@sandysthrifts.com",
+  "contactPhone": "555-0123",
+  "contactAddress": "123 Main Street, Thrift City, TC 12345",
+  "contactInstagram": "",
+  "contactFacebook": "",
+  "openTime": "09:00",
+  "closeTime": "18:00",
+  "temporaryClosed": false,
+  "createdAt": "2026-02-24T00:00:00Z"
+}

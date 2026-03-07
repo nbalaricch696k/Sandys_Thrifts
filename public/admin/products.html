@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Manage Products - Clothes Store</title>
+    <link rel="stylesheet" href="../styles.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="container header-row">
+        <div class="brand">
+          <div class="brand-name">Admin Panel</div>
+        </div>
+        <nav class="nav">
+          <a href="/admin/dashboard">Dashboard</a>
+          <a href="/admin/orders">Orders</a>
+          <a href="/admin/settings">Settings</a>
+          <a href="/">Back to Store</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="container">
+      <h2>Manage Products</h2>
+      <button id="add-product" class="btn btn-primary">Add New Product</button>
+      <div id="products-list"></div>
+    </main>
+
+    <div id="product-modal" class="modal hidden">
+      <div class="modal-content">
+        <button id="close-modal" class="modal-close">×</button>
+        <h3 id="modal-title">Add Product</h3>
+        <form id="product-form">
+          <input name="name" placeholder="Name" required />
+          <input name="price" type="number" step="0.01" placeholder="Price" required />
+          <select name="currency" required>
+            <option value="USD">USD</option>
+            <option value="GHS">GHS</option>
+          </select>
+          <input name="discount" type="number" min="0" max="100" placeholder="Discount %" />
+          <textarea name="description" placeholder="Description" required></textarea>
+          <input name="image" placeholder="Image URL" required />
+          <input name="sizes" placeholder="Sizes (comma separated)" />
+          <input name="colors" placeholder="Colors (comma separated)" />
+          <button type="submit" class="btn btn-primary">Save</button>
+        </form>
+      </div>
+    </div>
+
+    <script>
+      let products = [];
+      let editingId = null;
+
+      async function loadProducts() {
+        const res = await fetch('/api/admin/products');
+        products = await res.json();
+        renderProducts();
+      }
+
+      function renderProducts() {
+        const list = document.getElementById('products-list');
+        list.innerHTML = '';
+        products.forEach(p => {
+          const el = document.createElement('div');
+          el.className = 'card';
+          const symbol = p.currency === 'GHS' ? '₵' : '$';
+          let priceHtml = `${symbol}${p.price.toFixed(2)}`;
+          if (p.discount && p.discount > 0) {
+            const discountedPrice = (p.price * (1 - p.discount / 100)).toFixed(2);
+            priceHtml = `<span style="text-decoration: line-through; color: #999;">${symbol}${p.price.toFixed(2)}</span> <strong style="color: #e91e8c;">${symbol}${discountedPrice} (-${p.discount}%)</strong>`;
+          }
+          el.innerHTML = `
+            <img src="${p.image}" alt="${p.name}" />
+            <h3>${p.name}</h3>
+            <p>${p.description}</p>
+            <div class="meta">
+              <div class="price">
+                ${priceHtml}
+              </div>
+              <button data-id="${p.id}" class="edit btn">Edit</button>
+              <button data-id="${p.id}" class="delete btn">Delete</button>
+            </div>
+          `;
+          list.appendChild(el);
+        });
+        document.querySelectorAll('.edit').forEach(b => b.addEventListener('click', e => editProduct(e.target.dataset.id)));
+        document.querySelectorAll('.delete').forEach(b => b.addEventListener('click', e => deleteProduct(e.target.dataset.id)));
+      }
+
+      function editProduct(id) {
+        const p = products.find(x => x.id === id);
+        if (!p) return;
+        editingId = id;
+        document.getElementById('modal-title').textContent = 'Edit Product';
+        document.querySelector('[name=name]').value = p.name;
+        document.querySelector('[name=price]').value = p.price;
+        document.querySelector('[name=currency]').value = p.currency || 'USD';
+        document.querySelector('[name=discount]').value = p.discount || 0;
+        document.querySelector('[name=description]').value = p.description;
+        document.querySelector('[name=image]').value = p.image;
+        document.querySelector('[name=sizes]').value = p.sizes ? p.sizes.join(', ') : '';
+        document.querySelector('[name=colors]').value = p.colors ? p.colors.join(', ') : '';
+        document.getElementById('product-modal').classList.remove('hidden');
+      }
+
+      document.getElementById('add-product').addEventListener('click', () => {
+        editingId = null;
+        document.getElementById('modal-title').textContent = 'Add Product';
+        document.getElementById('product-form').reset();
+        document.getElementById('product-modal').classList.remove('hidden');
+      });
+
+      document.getElementById('close-modal').addEventListener('click', () => {
+        document.getElementById('product-modal').classList.add('hidden');
+      });
+
+      document.getElementById('product-form').addEventListener('submit', async e => {
+        e.preventDefault();
+        const form = new FormData(e.target);
+        const data = {
+          name: form.get('name'),
+          price: parseFloat(form.get('price')),
+          currency: form.get('currency'),
+          discount: parseInt(form.get('discount')) || 0,
+          description: form.get('description'),
+          image: form.get('image'),
+          sizes: form.get('sizes').split(',').map(s => s.trim()).filter(s => s),
+          colors: form.get('colors').split(',').map(c => c.trim()).filter(c => c)
+        };
+        let res;
+        if (editingId) {
+          res = await fetch(`/api/admin/products/${editingId}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+          });
+        } else {
+          res = await fetch('/api/admin/products', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+          });
+        }
+        if (res.ok) {
+          document.getElementById('product-modal').classList.add('hidden');
+          loadProducts();
+        }
+      });
+
+      async function deleteProduct(id) {
+        if (!confirm('Delete this product?')) return;
+        const res = await fetch(`/api/admin/products/${id}`, { method: 'DELETE' });
+        if (res.ok) loadProducts();
+      }
+
+      loadProducts();
+    </script>
+  </body>
+</html>

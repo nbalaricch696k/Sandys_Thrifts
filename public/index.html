@@ -1,0 +1,189 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Sandy's Thrifts</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="container header-row">
+        <div class="brand">
+          <img src="logo.svg" alt="Sandy's Thrifts" class="logo" />
+          <div class="brand-text">
+            <div class="brand-name">Sandy's Thrifts</div>
+            <div class="brand-tag" id="storeTagline">Quality pieces at thrift prices</div>
+          </div>
+        </div>
+        <nav class="nav">
+          <a href="#products">Shop</a>
+          <a href="#about">About</a>
+          <span id="auth-links">
+            <a href="/login">Login</a> | <a href="/register">Register</a>
+          </span>
+        </nav>
+        <div class="actions">
+          <button id="cart-btn" class="btn btn-ghost">Cart (<span id="cart-count">0</span>)</button>
+        </div>
+      </div>
+    </header>
+    <div id="store-status" style="text-align:center;padding:6px;background:#ffe6f2;color:#c7175f;font-weight:600;">Loading store status...</div>
+
+    <main>
+      <section class="hero">
+        <div class="container hero-inner">
+          <div class="hero-copy">
+            <h2>Timeless pieces, modern comfort</h2>
+            <p>Discover curated styles for everyday wear — sustainably sourced, crafted to last.</p>
+            <a href="#products" class="btn btn-primary">Shop Now</a>
+          </div>
+          <div class="hero-image">
+            <img src="https://images.unsplash.com/photo-1520975912733-8f3b5b8a8d3a?w=1200&q=80" alt="Clothes hero" />
+          </div>
+        </div>
+      </section>
+
+      <section id="videos" class="container video-section">
+        <h2 class="section-title">Featured Videos</h2>
+        <div class="video-grid">
+          <div class="video-item">
+            <video controls poster="https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=400&q=80">
+              <source src="" type="video/mp4">
+              Your browser does not support the video tag.
+            </video>
+            <div class="video-info">
+              <h4>Style Showcase</h4>
+              <p>Discover our latest fashion trends</p>
+            </div>
+          </div>
+          <div class="video-item">
+            <video controls poster="https://images.unsplash.com/photo-1445205170230-053b83016050?w=400&q=80">
+              <source src="" type="video/mp4">
+              Your browser does not support the video tag.
+            </video>
+            <div class="video-info">
+              <h4>Behind the Scenes</h4>
+              <p>See how we curate our collection</p>
+            </div>
+          </div>
+          <div class="video-item">
+            <video controls poster="https://images.unsplash.com/photo-1441984904996-e0b6ba687e04?w=400&q=80">
+              <source src="" type="video/mp4">
+              Your browser does not support the video tag.
+            </video>
+            <div class="video-info">
+              <h4>Customer Stories</h4>
+              <p>Hear from our satisfied customers</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="just-arrived" class="container just-arrived-section">
+        <h2 class="section-title">JUST ARRIVED</h2>
+        <div class="just-arrived-grid">
+          <!-- Products will be dynamically inserted here -->
+        </div>
+      </section>
+
+      <section id="products" class="container">
+        <div class="product-showcase">
+          <div class="product-carousel">
+            <div id="product-slideshow" class="slideshow">
+              <!-- Products will be dynamically inserted here -->
+            </div>
+            <button id="prev-btn" class="carousel-btn prev-btn">‹</button>
+            <button id="next-btn" class="carousel-btn next-btn">›</button>
+          </div>
+          <div id="other-products" class="other-products">
+            <!-- Additional products will be displayed here -->
+          </div>
+        </div>
+      </section>
+
+      <section id="about" class="container about">
+        <h3>About our store</h3>
+        <p>We offer timeless pieces at unbeatable prices. Sandy's Thrifts is your destination for quality fashion, sustainably sourced and affordably priced.</p>
+      </section>
+
+      <section id="contact" class="container contact-section">
+        <h3>Get in Touch</h3>
+        <div class="contact-info">
+          <div><strong>Email:</strong> <span id="contactEmail">contact@sandysthrifts.com</span></div>
+          <div><strong>Phone:</strong> <span id="contactPhone">555-0123</span></div>
+          <div><strong>Address:</strong> <span id="contactAddress">123 Main Street, Thrift City, TC 12345</span></div>
+          <div id="contactSocial"></div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="container footer-row">
+        <div>© <span id="footerStoreName">Sandy's Thrifts</span> 2026</div>
+        <div>Built with ❤️</div>
+      </div>
+    </footer>
+
+    <!-- Product detail modal -->
+    <div id="product-modal" class="modal hidden">
+      <div class="modal-card">
+        <button id="close-product" class="modal-close">×</button>
+        <div class="modal-body">
+          <img id="modal-image" src="" alt="product" />
+          <div class="modal-info">
+            <h3 id="modal-title"></h3>
+            <div id="modal-price" class="price"></div>
+            <p id="modal-desc"></p>
+            <div id="modal-variants"></div>
+            <div class="modal-actions">
+              <button id="modal-add" class="btn btn-primary">Add to cart</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Cart modal -->
+    <div id="cart-modal" class="modal hidden">
+      <div class="modal-content cart-card">
+        <button id="close-cart" class="modal-close">×</button>
+        <h2>Your Cart</h2>
+        <div id="cart-items"></div>
+        <div id="cart-total" class="cart-total"></div>
+
+        <h3>Checkout</h3>
+        <form id="checkout-form">
+          <input name="name" placeholder="Full name" required />
+          <input name="email" type="email" placeholder="Email" required />
+          <input name="phone" placeholder="Phone number" required />
+          <input name="address" placeholder="Shipping address" required />
+          <button type="submit" class="btn btn-primary">Pay with Mobile Money</button>
+        </form>
+        <div id="order-result"></div>
+      </div>
+    </div>
+
+    <script>
+      async function updateAuthLinks() {
+        try {
+          const res = await fetch('/api/session');
+          const { loggedIn } = await res.json();
+          const authLinks = document.getElementById('auth-links');
+          if (loggedIn) {
+            authLinks.innerHTML = '<a href="/account">Account</a> | <form method="POST" action="/logout" style="display:inline;"><button type="submit" style="background:none;border:none;color:inherit;text-decoration:underline;cursor:pointer;">Logout</button></form>';
+          } else {
+            authLinks.innerHTML = '<a href="/login">Login</a> | <a href="/register">Register</a>';
+          }
+        } catch (error) {
+          console.error('Error checking session:', error);
+        }
+      }
+      updateAuthLinks();
+    </script>
+    <script src="app.js"></script>
+  </body>
+</html>

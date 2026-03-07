@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Register - Sandy's Thrifts</title>
+    <link rel="stylesheet" href="styles.css" />
+    <style>
+      .register-container {
+        max-width: 400px;
+        margin: 60px auto;
+        padding: 2rem;
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      }
+      .register-container h2 {
+        text-align: center;
+        margin-bottom: 0.5rem;
+        color: #2c3e50;
+      }
+      .register-container p {
+        text-align: center;
+        color: #666;
+        margin-bottom: 2rem;
+        font-size: 0.9rem;
+      }
+      .error {
+        background: #f8d7da;
+        color: #721c24;
+        padding: 0.75rem;
+        border-radius: 4px;
+        margin-bottom: 1rem;
+        display: none;
+      }
+      .error.show {
+        display: block;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="register-container">
+      <h2>Join Sandy's Thrifts</h2>
+      <p>Create your account</p>
+      
+      <div id="error" class="error"></div>
+      
+      <form id="registerForm" method="POST" action="/register">
+        <div style="margin-bottom: 1rem;">
+          <input name="name" type="text" placeholder="Full Name" required />
+        </div>
+        <div style="margin-bottom: 1rem;">
+          <input name="email" type="email" placeholder="Email" required />
+        </div>
+        <div style="margin-bottom: 1rem;">
+          <input name="password" type="password" placeholder="Password" required />
+        </div>
+        <button type="submit" style="width:100%;padding:0.75rem;background:#e91e8c;color:white;border:none;border-radius:4px;cursor:pointer;">Register</button>
+      </form>
+      
+      <p style="text-align:center;margin-top:1rem;">
+        Already have an account? <a href="/login">Login here</a>
+      </p>
+    </div>
+  </body>
+</html>

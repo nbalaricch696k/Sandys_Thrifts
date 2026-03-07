@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Manage Orders - Admin</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #f5f5f5;
+      color: #333;
+    }
+
+    header {
+      background: #2c3e50;
+      color: white;
+      padding: 1rem 2rem;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    header h1 {
+      font-size: 1.5rem;
+      margin-bottom: 0.5rem;
+    }
+
+    nav {
+      display: flex;
+      gap: 2rem;
+      margin-top: 1rem;
+    }
+
+    nav a {
+      color: white;
+      text-decoration: none;
+      padding: 0.5rem 1rem;
+      border-radius: 4px;
+      transition: background 0.3s;
+    }
+
+    nav a:hover {
+      background: rgba(255,255,255,0.1);
+    }
+
+    nav a.active {
+      background: #3498db;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 2rem auto;
+      padding: 0 1rem;
+    }
+
+    .filters {
+      background: white;
+      padding: 1.5rem;
+      border-radius: 8px;
+      margin-bottom: 2rem;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .filters select {
+      padding: 0.5rem;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 1rem;
+    }
+
+    .filters label {
+      font-weight: 600;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    table thead {
+      background: #2c3e50;
+      color: white;
+    }
+
+    table th {
+      padding: 1rem;
+      text-align: left;
+      font-weight: 600;
+    }
+
+    table td {
+      padding: 1rem;
+      border-bottom: 1px solid #eee;
+    }
+
+    table tbody tr:hover {
+      background: #f9f9f9;
+    }
+
+    .order-id {
+      font-weight: 600;
+      color: #3498db;
+    }
+
+    .status {
+      padding: 0.4rem 0.8rem;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+
+    .status.pending {
+      background: #fee;
+      color: #c33;
+    }
+
+    .status.confirmed {
+      background: #efe;
+      color: #3c3;
+    }
+
+    .email-status {
+      font-size: 0.85rem;
+      padding: 0.3rem 0.6rem;
+      border-radius: 4px;
+    }
+
+    .email-status.sent {
+      background: #d4edda;
+      color: #155724;
+    }
+
+    .email-status.not-sent {
+      background: #f8d7da;
+      color: #721c24;
+    }
+
+    .actions {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    button {
+      padding: 0.5rem 1rem;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      font-weight: 600;
+      transition: all 0.3s;
+    }
+
+    .btn-primary {
+      background: #3498db;
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: #2980b9;
+    }
+
+    .btn-success {
+      background: #27ae60;
+      color: white;
+    }
+
+    .btn-success:hover {
+      background: #229954;
+    }
+
+    .btn-info {
+      background: #17a2b8;
+      color: white;
+    }
+
+    .btn-info:hover {
+      background: #138496;
+    }
+
+    .btn-small {
+      padding: 0.3rem 0.6rem;
+      font-size: 0.8rem;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 3rem 1rem;
+      background: white;
+      border-radius: 8px;
+      color: #999;
+    }
+
+    .empty-state h2 {
+      font-size: 1.5rem;
+      margin-bottom: 0.5rem;
+    }
+
+    /* Modal */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0,0,0,0.5);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal.active {
+      display: flex;
+    }
+
+    .modal-content {
+      background: white;
+      padding: 2rem;
+      border-radius: 8px;
+      max-width: 600px;
+      max-height: 80vh;
+      overflow-y: auto;
+      width: 90%;
+    }
+
+    .modal-header {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .modal-close {
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      cursor: pointer;
+      color: #999;
+    }
+
+    .modal-close:hover {
+      color: #333;
+    }
+
+    .order-details {
+      margin: 1rem 0;
+    }
+
+    .order-details p {
+      margin: 0.5rem 0;
+      line-height: 1.6;
+    }
+
+    .order-details strong {
+      color: #2c3e50;
+    }
+
+    .items-list {
+      background: #f9f9f9;
+      padding: 1rem;
+      border-radius: 4px;
+      margin: 1rem 0;
+    }
+
+    .item {
+      display: flex;
+      justify-content: space-between;
+      padding: 0.5rem 0;
+      border-bottom: 1px solid #eee;
+    }
+
+    .item:last-child {
+      border-bottom: none;
+    }
+
+    .item-total {
+      font-weight: 600;
+      color: #27ae60;
+    }
+
+    .modal-actions {
+      display: flex;
+      gap: 1rem;
+      margin-top: 2rem;
+      justify-content: flex-end;
+    }
+
+    .loading {
+      text-align: center;
+      padding: 2rem;
+      color: #999;
+    }
+
+    .success-message {
+      background: #d4edda;
+      color: #155724;
+      padding: 1rem;
+      border-radius: 4px;
+      margin-bottom: 1rem;
+      display: none;
+    }
+
+    .success-message.show {
+      display: block;
+    }
+
+    .error-message {
+      background: #f8d7da;
+      color: #721c24;
+      padding: 1rem;
+      border-radius: 4px;
+      margin-bottom: 1rem;
+      display: none;
+    }
+
+    .error-message.show {
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Order Management</h1>
+    <nav>
+      <a href="/admin/dashboard">Dashboard</a>
+      <a href="/admin/products">Manage Products</a>
+      <a href="/admin/orders" class="active">Manage Orders</a>
+      <a href="/admin/settings">Settings</a>
+      <a href="/" target="_blank">View Store</a>
+    </nav>
+  </header>
+
+  <div class="container">
+    <div class="success-message" id="successMsg"></div>
+    <div class="error-message" id="errorMsg"></div>
+
+    <div class="filters">
+      <label for="statusFilter">Filter by Status:</label>
+      <select id="statusFilter">
+        <option value="">All Orders</option>
+        <option value="pending">Pending</option>
+        <option value="confirmed">Confirmed</option>
+      </select>
+      <label for="emailFilter">Filter by Email:</label>
+      <select id="emailFilter">
+        <option value="">All</option>
+        <option value="sent">Email Sent</option>
+        <option value="not-sent">Email Not Sent</option>
+      </select>
+    </div>
+
+    <div id="ordersContainer">
+      <div class="loading">Loading orders...</div>
+    </div>
+  </div>
+
+  <!-- Order Details Modal -->
+  <div class="modal" id="orderModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <span id="modalOrderId">Order #</span>
+        <button class="modal-close" onclick="closeModal()">×</button>
+      </div>
+      <div id="modalOrderDetails"></div>
+      <div class="modal-actions">
+        <button class="btn-primary" id="confirmBtn" onclick="confirmOrder()">Confirm Order</button>
+        <button class="btn-success" id="emailBtn" onclick="sendEmail()">Send Confirmation Email</button>
+        <button class="btn-info" onclick="closeModal()">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let allOrders = [];
+    let currentOrderId = null;
+
+    async function loadOrders() {
+      try {
+        const response = await fetch('/api/admin/orders', {
+          headers: {
+            'Authorization': 'Basic ' + btoa('admin:admin')
+          }
+        });
+        const orders = await response.json();
+        allOrders = orders;
+        renderOrders(orders);
+      } catch (error) {
+        console.error('Error loading orders:', error);
+        document.getElementById('ordersContainer').innerHTML = 
+          '<div class="empty-state"><h2>Error loading orders</h2><p>' + error.message + '</p></div>';
+      }
+    }
+
+    function renderOrders(orders) {
+      if (orders.length === 0) {
+        document.getElementById('ordersContainer').innerHTML = 
+          '<div class="empty-state"><h2>No Orders Yet</h2><p>Orders placed by customers will appear here.</p></div>';
+        return;
+      }
+
+      let html = `
+        <table>
+          <thead>
+            <tr>
+              <th>Order ID</th>
+              <th>Customer</th>
+              <th>Total</th>
+              <th>Status</th>
+              <th>Email Status</th>
+              <th>Date</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+      `;
+
+      orders.forEach(order => {
+        const total = order.items.reduce((sum, item) => sum + (item.price * item.quantity), 0).toFixed(2);
+        const date = new Date(order.createdAt).toLocaleDateString();
+        const status = order.status || 'pending';
+        const emailSent = order.emailSent ? 'sent' : 'not-sent';
+        const emailText = order.emailSent ? '✓ Sent' : 'Not Sent';
+
+        html += `
+          <tr>
+            <td class="order-id">#${order.id}</td>
+            <td>
+              <div>${order.customerName || 'N/A'}</div>
+              <small>${order.customerEmail || 'N/A'}</small>
+            </td>
+            <td><strong>$${total}</strong></td>
+            <td><span class="status ${status}">${status.charAt(0).toUpperCase() + status.slice(1)}</span></td>
+            <td><span class="email-status ${emailSent}">${emailText}</span></td>
+            <td>${date}</td>
+            <td>
+              <div class="actions">
+                <button class="btn-primary btn-small" onclick="viewOrder(${order.id})">View</button>
+              </div>
+            </td>
+          </tr>
+        `;
+      });
+
+      html += '</tbody></table>';
+      document.getElementById('ordersContainer').innerHTML = html;
+    }
+
+    function applyFilters() {
+      const statusFilter = document.getElementById('statusFilter').value;
+      const emailFilter = document.getElementById('emailFilter').value;
+
+      let filtered = allOrders;
+
+      if (statusFilter) {
+        filtered = filtered.filter(o => (o.status || 'pending') === statusFilter);
+      }
+
+      if (emailFilter === 'sent') {
+        filtered = filtered.filter(o => o.emailSent);
+      } else if (emailFilter === 'not-sent') {
+        filtered = filtered.filter(o => !o.emailSent);
+      }
+
+      renderOrders(filtered);
+    }
+
+    function viewOrder(orderId) {
+      currentOrderId = orderId;
+      const order = allOrders.find(o => o.id === orderId);
+      if (!order) return;
+
+      document.getElementById('modalOrderId').textContent = `Order #${order.id}`;
+
+      const total = order.items.reduce((sum, item) => sum + (item.price * item.quantity), 0).toFixed(2);
+      const status = order.status || 'pending';
+      const date = new Date(order.createdAt).toLocaleString();
+
+      let itemsHtml = '';
+      order.items.forEach(item => {
+        const itemTotal = (item.price * item.quantity).toFixed(2);
+        itemsHtml += `
+          <div class="item">
+            <span>${item.name} (${item.quantity}x @ $${item.price})</span>
+            <span class="item-total">$${itemTotal}</span>
+          </div>
+        `;
+      });
+
+      const emailStatus = order.emailSent 
+        ? `<p><strong>Email Status:</strong> ✓ Sent on ${new Date(order.emailSentAt).toLocaleString()}</p>`
+        : '<p><strong>Email Status:</strong> Not sent yet</p>';
+
+      let detailsHtml = `
+        <div class="order-details">
+          <p><strong>Order ID:</strong> ${order.id}</p>
+          <p><strong>Date:</strong> ${date}</p>
+          <p><strong>Customer Name:</strong> ${order.customerName || 'N/A'}</p>
+          <p><strong>Customer Email:</strong> ${order.customerEmail || 'N/A'}</p>
+          <p><strong>Shipping Address:</strong> ${order.shippingAddress || 'N/A'}</p>
+          <p><strong>Phone:</strong> ${order.phone || 'N/A'}</p>
+          <p><strong>Status:</strong> <span class="status ${status}">${status.charAt(0).toUpperCase() + status.slice(1)}</span></p>
+          ${emailStatus}
+          <h4 style="margin-top: 1.5rem;">Items:</h4>
+          <div class="items-list">
+            ${itemsHtml}
+            <div style="border-top: 2px solid #ddd; padding-top: 0.5rem; margin-top: 0.5rem; font-weight: 600;">
+              <div class="item">
+                <span>Total:</span>
+                <span class="item-total">$${total}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+
+      document.getElementById('modalOrderDetails').innerHTML = detailsHtml;
+
+      const confirmBtn = document.getElementById('confirmBtn');
+      if (status === 'confirmed') {
+        confirmBtn.textContent = '✓ Confirmed';
+        confirmBtn.disabled = true;
+        confirmBtn.style.opacity = '0.6';
+      } else {
+        confirmBtn.textContent = 'Confirm Order';
+        confirmBtn.disabled = false;
+        confirmBtn.style.opacity = '1';
+      }
+
+      document.getElementById('orderModal').classList.add('active');
+    }
+
+    async function confirmOrder() {
+      try {
+        const response = await fetch(`/api/admin/orders/${currentOrderId}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Basic ' + btoa('admin:admin')
+          },
+          body: JSON.stringify({ status: 'confirmed' })
+        });
+
+        if (response.ok) {
+          showSuccess('Order confirmed successfully!');
+          loadOrders();
+          setTimeout(() => closeModal(), 1000);
+        } else {
+          showError('Failed to confirm order');
+        }
+      } catch (error) {
+        showError('Error confirming order: ' + error.message);
+      }
+    }
+
+    async function sendEmail() {
+      try {
+        const response = await fetch(`/api/admin/orders/${currentOrderId}/send-email`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Basic ' + btoa('admin:admin')
+          }
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+          showSuccess('Confirmation email sent successfully!');
+          loadOrders();
+          setTimeout(() => closeModal(), 1500);
+        } else {
+          showError('Failed to send email: ' + (result.error || 'Unknown error'));
+        }
+      } catch (error) {
+        showError('Error sending email: ' + error.message);
+      }
+    }
+
+    function closeModal() {
+      document.getElementById('orderModal').classList.remove('active');
+      currentOrderId = null;
+    }
+
+    function showSuccess(message) {
+      const msgEl = document.getElementById('successMsg');
+      msgEl.textContent = message;
+      msgEl.classList.add('show');
+      setTimeout(() => msgEl.classList.remove('show'), 3000);
+    }
+
+    function showError(message) {
+      const msgEl = document.getElementById('errorMsg');
+      msgEl.textContent = message;
+      msgEl.classList.add('show');
+      setTimeout(() => msgEl.classList.remove('show'), 3000);
+    }
+
+    // Event listeners
+    document.getElementById('statusFilter').addEventListener('change', applyFilters);
+    document.getElementById('emailFilter').addEventListener('change', applyFilters);
+
+    // Load orders on page load
+    loadOrders();
+  </script>
+</body>
+</html>
