@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Login - SANDYS THRIFTS</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <link rel="stylesheet" href="../styles.css">
+  <style>
+    body {
+      background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+    }
+
+    .auth-container {
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+      overflow: hidden;
+      width: 100%;
+      max-width: 450px;
+    }
+
+    .auth-header {
+      background: linear-gradient(135deg, #0f0f0f 0%, #333333 100%);
+      color: white;
+      padding: 2rem 1.5rem;
+      text-align: center;
+    }
+
+    .auth-header h1 {
+      font-size: 1.8rem;
+      margin-bottom: 0.5rem;
+      letter-spacing: 0.05em;
+    }
+
+    .auth-header p {
+      font-size: 0.9rem;
+      opacity: 0.9;
+      margin: 0;
+    }
+
+    .auth-body {
+      padding: 2rem 1.5rem;
+    }
+
+    .setup-info {
+      background: #fff3cd;
+      border: 1px solid #ffc107;
+      border-radius: 8px;
+      padding: 1rem;
+      margin-bottom: 1.5rem;
+      font-size: 0.9rem;
+      color: #856404;
+    }
+
+    .setup-info strong {
+      display: block;
+      margin-bottom: 0.5rem;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      margin-bottom: 1rem;
+    }
+
+    label {
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      font-size: 0.9rem;
+    }
+
+    input {
+      padding: 0.75rem;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 1rem;
+      font-family: inherit;
+      transition: border-color 0.3s ease;
+    }
+
+    input:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(65, 88, 208, 0.1);
+    }
+
+    .error {
+      background: #f8d7da;
+      color: #721c24;
+      padding: 0.75rem;
+      border-radius: 8px;
+      margin-bottom: 1rem;
+      font-size: 0.9rem;
+      display: none;
+    }
+
+    .error.show {
+      display: block;
+    }
+
+    .login-btn {
+      width: 100%;
+      padding: 0.75rem;
+      background: var(--primary);
+      color: white;
+      border: none;
+      border-radius: 50px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-size: 0.95rem;
+    }
+
+    .login-btn:hover {
+      background: #3848bb;
+      transform: translateY(-2px);
+    }
+
+    @media (max-width: 480px) {
+      .auth-container {
+        max-width: 100%;
+      }
+
+      .auth-header h1 {
+        font-size: 1.5rem;
+      }
+
+      .auth-body {
+        padding: 1.5rem 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="auth-container">
+    <div class="auth-header">
+      <h1>SNYTRFS ADMIN</h1>
+      <p>Store Management Dashboard</p>
+    </div>
+
+    <div class="auth-body">
+      <div id="setupInfo" class="setup-info"></div>
+      <div id="error" class="error"></div>
+
+      <form id="loginForm">
+        <div class="form-group">
+          <label for="username">Username or Email</label>
+          <input type="text" id="username" name="username" placeholder="Enter your username or email" required />
+        </div>
+
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input type="password" id="password" name="password" placeholder="Enter your password" required />
+        </div>
+
+        <button type="submit" class="login-btn">Sign In</button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    // Load and display setup info on startup
+    async function loadSetupInfo() {
+      try {
+        const response = await fetch('/api/admin/setup-info');
+        if (response.ok) {
+          const data = await response.json();
+          const infoDiv = document.getElementById('setupInfo');
+          
+          if (data.isFirstSetup) {
+            infoDiv.innerHTML = `
+              <strong>🔑 Initial Setup Required</strong>
+              Run the admin provisioning script to set up your admin account:
+              <code style="display: block; margin-top: 0.5rem;">node provision-admin.js your-admin@gmail.com</code>
+              Then use the generated credentials to log in.
+            `;
+          } else if (data.adminEmail) {
+            infoDiv.innerHTML = `✅ Admin account configured`;
+          }
+        }
+      } catch (error) {
+        console.error('Error loading setup info:', error);
+      }
+    }
+
+    loadSetupInfo();
+
+    document.getElementById('loginForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const username = document.getElementById('username').value;
+      const password = document.getElementById('password').value;
+      const errorEl = document.getElementById('error');
+      
+      try {
+        const response = await fetch('/admin/login', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+          },
+          body: `username=${encodeURIComponent(username)}&password=${encodeURIComponent(password)}`
+        });
+        
+        if (!response.ok) {
+          errorEl.textContent = 'Invalid username or password';
+          errorEl.classList.add('show');
+        } else {
+          window.location.href = '/admin/dashboard';
+        }
+      } catch (error) {
+        errorEl.textContent = 'Login failed: ' + error.message;
+        errorEl.classList.add('show');
+      }
+    });
+  </script>
+</body>
+</html>

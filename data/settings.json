@@ -1,0 +1,23 @@
+{
+  "storeName": "Sandy's Thrifts",
+  "storeTagline": "Quality pieces at thrift prices",
+  "adminUsername": "sandyadmin",
+  "heroVideoUrl": "",
+  "categories": [
+    "Essentials",
+    "Jerseys",
+    "T-Shirts",
+    "Tracksuits"
+  ],
+  "contactEmail": "contact@sandysthrifts.com",
+  "contactPhone": "555-0123",
+  "contactAddress": "123 Main Street, Thrift City, TC 12345",
+  "contactInstagram": "",
+  "contactFacebook": "",
+  "openTime": "09:00",
+  "closeTime": "18:00",
+  "temporaryClosed": false,
+  "createdAt": "2026-04-16T02:26:30.159Z",
+  "adminEmail": "admin@sandysthrifts.com",
+  "adminPasswordHash": "$2b$10$E3lb.toAm/QwMyZa4z4QOeFU6FSkNKnsMz2wVpasIveDPqAiH.E3q"
+}

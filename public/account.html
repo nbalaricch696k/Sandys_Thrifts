@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>My Account - Sandy's Thrifts</title>
+    <link rel="stylesheet" href="styles.css" />
+    <style>
+      .account-container {
+        max-width: 800px;
+        margin: 40px auto;
+        padding: 2rem;
+      }
+      .account-header {
+        text-align: center;
+        margin-bottom: 2rem;
+      }
+      .account-info {
+        background: white;
+        padding: 1.5rem;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        margin-bottom: 2rem;
+      }
+      .orders-list {
+        background: white;
+        padding: 1.5rem;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      }
+      .order-item {
+        border-bottom: 1px solid #eee;
+        padding: 1rem 0;
+      }
+      .order-item:last-child {
+        border-bottom: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container account-container">
+      <div class="account-header">
+        <h2>My Account</h2>
+      </div>
+      
+      <div class="account-info">
+        <h3>Account Information</h3>
+        <p><strong>Name:</strong> <span id="userName"></span></p>
+        <p><strong>Email:</strong> <span id="userEmail"></span></p>
+        <form method="POST" action="/logout" style="margin-top:1rem;">
+          <button type="submit" style="padding:0.5rem 1rem;background:#e91e8c;color:white;border:none;border-radius:4px;cursor:pointer;">Logout</button>
+        </form>
+      </div>
+      
+      <div class="orders-list">
+        <h3>My Orders</h3>
+        <div id="ordersContainer">
+          <p>Loading orders...</p>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      async function loadAccount() {
+        try {
+          const res = await fetch('/api/user');
+          if (res.status === 401) {
+            window.location.href = '/login';
+            return;
+          }
+          const user = await res.json();
+          document.getElementById('userName').textContent = user.name;
+          document.getElementById('userEmail').textContent = user.email;
+          
+          const ordersContainer = document.getElementById('ordersContainer');
+          if (user.orders.length === 0) {
+            ordersContainer.innerHTML = '<p>No orders yet.</p>';
+          } else {
+            ordersContainer.innerHTML = user.orders.map(order => `
+              <div class="order-item">
+                <p><strong>Order #${order.id}</strong> - ${new Date(order.createdAt).toLocaleDateString()}</p>
+                <p>Status: ${order.status}</p>
+                <p>Total: $${order.items.reduce((sum, item) => sum + item.price * item.qty, 0).toFixed(2)}</p>
+              </div>
+            `).join('');
+          }
+        } catch (error) {
+          console.error('Error loading account:', error);
+        }
+      }
+      
+      loadAccount();
+    </script>
+  </body>
+</html>

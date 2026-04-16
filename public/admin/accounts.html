@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Accounts - Sandy's Thrifts</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #f5f5f5;
+      color: #333;
+    }
+
+    header {
+      background: #2c3e50;
+      color: white;
+      padding: 1rem 2rem;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    header h1 {
+      font-size: 1.5rem;
+      margin-bottom: 0.5rem;
+    }
+
+    nav {
+      display: flex;
+      gap: 2rem;
+      margin-top: 1rem;
+      flex-wrap: wrap;
+    }
+
+    nav a {
+      color: white;
+      text-decoration: none;
+      padding: 0.5rem 1rem;
+      border-radius: 4px;
+      transition: background 0.3s;
+    }
+
+    nav a:hover {
+      background: rgba(255,255,255,0.1);
+    }
+
+    nav a.active {
+      background: #e91e8c;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 2rem auto;
+      padding: 0 1rem;
+    }
+
+    .accounts-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 2rem;
+    }
+
+    .card {
+      background: white;
+      padding: 2rem;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .card h2 {
+      font-size: 1.3rem;
+      margin-bottom: 1.5rem;
+      color: #2c3e50;
+      border-bottom: 2px solid #e91e8c;
+      padding-bottom: 0.5rem;
+    }
+
+    .info-box {
+      background: #e7f3ff;
+      border-left: 4px solid #2196F3;
+      padding: 1rem;
+      border-radius: 4px;
+      margin-bottom: 1.5rem;
+      font-size: 0.9rem;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      margin-bottom: 1rem;
+    }
+
+    label {
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      font-size: 0.9rem;
+    }
+
+    input {
+      padding: 0.75rem;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 1rem;
+      font-family: inherit;
+      transition: border-color 0.3s ease;
+    }
+
+    input:focus {
+      outline: none;
+      border-color: #e91e8c;
+      box-shadow: 0 0 0 3px rgba(233, 30, 140, 0.1);
+    }
+
+    button {
+      padding: 0.75rem 1.5rem;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 1rem;
+      font-weight: 600;
+      transition: all 0.3s;
+    }
+
+    .btn-primary {
+      background: #e91e8c;
+      color: white;
+      width: 100%;
+    }
+
+    .btn-primary:hover {
+      background: #c71570;
+    }
+
+    .btn-secondary {
+      background: #2c3e50;
+      color: white;
+    }
+
+    .btn-secondary:hover {
+      background: #1a2a35;
+    }
+
+    .message {
+      padding: 1rem;
+      border-radius: 4px;
+      margin-bottom: 1.5rem;
+      display: none;
+    }
+
+    .message.show {
+      display: block;
+    }
+
+    .success {
+      background: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+    }
+
+    .error {
+      background: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+    }
+
+    .account-info {
+      background: #f9f9f9;
+      padding: 1rem;
+      border-radius: 4px;
+      margin-bottom: 1.5rem;
+    }
+
+    .account-info h3 {
+      margin-bottom: 0.75rem;
+      color: #2c3e50;
+      font-size: 1rem;
+    }
+
+    .info-row {
+      display: grid;
+      grid-template-columns: 150px 1fr;
+      margin-bottom: 0.75rem;
+      font-size: 0.95rem;
+    }
+
+    .info-label {
+      font-weight: 600;
+      color: #666;
+    }
+
+    .info-value {
+      color: #333;
+      word-break: break-all;
+    }
+
+    .coming-soon {
+      background: #fff3cd;
+      border-left: 4px solid #ffc107;
+      padding: 1rem;
+      border-radius: 4px;
+      color: #856404;
+      margin: 1rem 0;
+    }
+
+    small {
+      color: #666;
+      font-size: 0.85rem;
+    }
+
+    @media (max-width: 768px) {
+      nav {
+        gap: 0.5rem;
+      }
+
+      nav a {
+        padding: 0.4rem 0.8rem;
+        font-size: 0.9rem;
+      }
+
+      .info-row {
+        grid-template-columns: 1fr;
+      }
+
+      .info-label {
+        margin-bottom: 0.2rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Admin Accounts</h1>
+    <nav>
+      <a href="/admin/dashboard">Dashboard</a>
+      <a href="/admin/orders">Orders</a>
+      <a href="/admin/products">Products</a>
+      <a href="/admin/accounts" class="active">Accounts</a>
+      <a href="/admin/settings">Settings</a>
+      <a href="/" target="_blank">View Store</a>
+      <form method="POST" action="/admin/logout" style="display:inline;">
+        <button type="submit" style="background:none;border:none;color:white;text-decoration:underline;cursor:pointer;">Logout</button>
+      </form>
+    </nav>
+  </header>
+
+  <div class="container">
+    <div class="accounts-grid">
+      <!-- Current Account Section -->
+      <div class="card">
+        <h2>Your Account</h2>
+        <div id="accountMsg" class="message"></div>
+
+        <div class="account-info">
+          <h3>Account Details</h3>
+          <div class="info-row">
+            <div class="info-label">Username</div>
+            <div class="info-value" id="displayUsername">-</div>
+          </div>
+          <div class="info-row">
+            <div class="info-label">Email</div>
+            <div class="info-value" id="displayEmail">-</div>
+          </div>
+          <div class="info-row">
+            <div class="info-label">Created</div>
+            <div class="info-value" id="displayCreated">-</div>
+          </div>
+        </div>
+
+        <h3 style="margin-top: 2rem; margin-bottom: 1rem; color: #2c3e50;">Change Password</h3>
+        <div class="info-box">
+          Update your password to keep your admin account secure. You'll need to log in again with your new password.
+        </div>
+
+        <form id="changePasswordForm">
+          <div class="form-group">
+            <label for="currentPassword">Current Password *</label>
+            <input type="password" id="currentPassword" name="currentPassword" required />
+          </div>
+
+          <div class="form-group">
+            <label for="newPassword">New Password *</label>
+            <input type="password" id="newPassword" name="newPassword" required />
+            <small>Min 6 characters recommended</small>
+          </div>
+
+          <div class="form-group">
+            <label for="confirmPassword">Confirm New Password *</label>
+            <input type="password" id="confirmPassword" name="confirmPassword" required />
+          </div>
+
+          <button type="submit" class="btn-primary">Change Password</button>
+        </form>
+      </div>
+
+      <!-- Future Features -->
+      <div class="card">
+        <h2>Admin Management</h2>
+        <div class="coming-soon">
+          <strong>Coming Soon</strong>
+          <p style="margin-top: 0.5rem; margin-bottom: 0;">Additional features will include:</p>
+          <ul style="margin-top: 0.5rem; margin-left: 1.5rem;">
+            <li>Create additional admin accounts</li>
+            <li>View all admin accounts</li>
+            <li>Edit admin details</li>
+            <li>Delete admin accounts</li>
+            <li>Admin activity logs</li>
+          </ul>
+        </div>
+        <p style="margin-top: 1rem; color: #666; font-size: 0.9rem;">
+          These features are planned for future updates to help manage multiple administrators on your store.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    async function loadAccountInfo() {
+      try {
+        const response = await fetch('/api/admin/accounts');
+        if (!response.ok) throw new Error('Failed to load account info');
+        
+        const data = await response.json();
+        document.getElementById('displayUsername').textContent = data.adminUsername || 'N/A';
+        document.getElementById('displayEmail').textContent = data.adminEmail || 'N/A';
+        
+        if (data.createdAt) {
+          const date = new Date(data.createdAt);
+          document.getElementById('displayCreated').textContent = date.toLocaleDateString();
+        }
+      } catch (error) {
+        console.error('Error loading account info:', error);
+      }
+    }
+
+    document.getElementById('changePasswordForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const currentPassword = document.getElementById('currentPassword').value;
+      const newPassword = document.getElementById('newPassword').value;
+      const confirmPassword = document.getElementById('confirmPassword').value;
+      const msgEl = document.getElementById('accountMsg');
+      
+      // Clear previous message
+      msgEl.className = 'message';
+      msgEl.textContent = '';
+      
+      if (newPassword !== confirmPassword) {
+        msgEl.textContent = 'New passwords do not match';
+        msgEl.classList.add('error', 'show');
+        return;
+      }
+      
+      if (newPassword.length < 6) {
+        msgEl.textContent = 'Password must be at least 6 characters';
+        msgEl.classList.add('error', 'show');
+        return;
+      }
+      
+      try {
+        const response = await fetch('/api/admin/accounts/change-password', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            currentPassword,
+            newPassword
+          })
+        });
+        
+        const data = await response.json();
+        
+        if (!response.ok) {
+          msgEl.textContent = data.error || 'Failed to change password';
+          msgEl.classList.add('error', 'show');
+        } else {
+          msgEl.textContent = data.message;
+          msgEl.classList.add('success', 'show');
+          document.getElementById('changePasswordForm').reset();
+          
+          // Redirect to login after 2 seconds
+          setTimeout(() => {
+            window.location.href = '/admin/login';
+          }, 2000);
+        }
+      } catch (error) {
+        msgEl.textContent = 'Error: ' + error.message;
+        msgEl.classList.add('error', 'show');
+      }
+    });
+
+    // Load account info on page load
+    loadAccountInfo();
+  </script>
+</body>
+</html>

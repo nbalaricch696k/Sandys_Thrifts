@@ -1,0 +1,245 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Manage Products - Clothes Store</title>
+    <link rel="stylesheet" href="../styles.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="container header-row">
+        <div class="brand">
+          <div class="brand-name">Admin Panel</div>
+        </div>
+        <nav class="nav">
+          <a href="/admin/dashboard">Dashboard</a>
+          <a href="/admin/orders">Orders</a>
+          <a href="/admin/accounts">Accounts</a>
+          <a href="/admin/settings">Settings</a>
+          <a href="/">Back to Store</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="container">
+      <h2>Manage Products</h2>
+      <button id="add-product" class="btn btn-primary">Add New Product</button>
+      <div class="card" style="margin: 1.5rem 0; padding: 1.5rem; background: #fafafa; border: 1px solid #ddd;">
+        <h3 style="margin-bottom: 1rem;">Category Manager</h3>
+        <form id="category-form" style="display: flex; gap: 1rem; flex-wrap: wrap; align-items: flex-end;">
+          <div style="flex: 1; min-width: 200px;">
+            <label for="categoryName">New Category</label>
+            <input id="categoryName" name="categoryName" placeholder="e.g. Shoes" style="width:100%; padding:0.75rem; margin-top:0.5rem; border:1px solid #ccc; border-radius:6px;" required />
+          </div>
+          <button type="submit" class="btn btn-primary" style="min-width: 180px;">Add Category</button>
+        </form>
+        <div id="category-list" style="margin-top:1rem; display:flex; flex-wrap:wrap; gap:0.75rem;"></div>
+      </div>
+      <div id="products-list"></div>
+    </main>
+
+    <div id="product-modal" class="modal hidden">
+      <div class="modal-content">
+        <button id="close-modal" class="modal-close">×</button>
+        <h3 id="modal-title">Add Product</h3>
+        <form id="product-form">
+          <input name="name" placeholder="Name" required />
+          <input name="price" type="number" step="0.01" placeholder="Price" required />
+          <select name="currency" required>
+            <option value="USD">USD</option>
+            <option value="GHS">GHS</option>
+          </select>
+          <select name="category" id="productCategory" required>
+            <option value="">Select category</option>
+          </select>
+          <input name="discount" type="number" min="0" max="100" placeholder="Discount %" />
+          <textarea name="description" placeholder="Description" required></textarea>
+          <input name="image" placeholder="Image URL" required />
+          <input name="sizes" placeholder="Sizes (comma separated)" />
+          <input name="colors" placeholder="Colors (comma separated)" />
+          <button type="submit" class="btn btn-primary">Save</button>
+        </form>
+      </div>
+    </div>
+
+    <script>
+      let products = [];
+      let categories = [];
+      let editingId = null;
+
+      async function loadCategories() {
+        const res = await fetch('/api/admin/categories');
+        if (!res.ok) return;
+        categories = await res.json();
+        renderCategoryOptions();
+        renderCategoryTags();
+      }
+
+      function renderCategoryOptions() {
+        const select = document.getElementById('productCategory');
+        if (!select) return;
+        select.innerHTML = '<option value="">Select category</option>';
+        categories.forEach(cat => {
+          const opt = document.createElement('option');
+          opt.value = cat.toLowerCase().replace(/\s+/g, '-');
+          opt.textContent = cat;
+          select.appendChild(opt);
+        });
+      }
+
+      function renderCategoryTags() {
+        const container = document.getElementById('category-list');
+        if (!container) return;
+        container.innerHTML = '';
+        categories.forEach(cat => {
+          const chip = document.createElement('span');
+          chip.textContent = cat;
+          chip.style.padding = '0.5rem 0.75rem';
+          chip.style.background = '#fff';
+          chip.style.border = '1px solid #ccc';
+          chip.style.borderRadius = '999px';
+          chip.style.fontSize = '0.9rem';
+          chip.style.color = '#333';
+          container.appendChild(chip);
+        });
+      }
+
+      async function loadProducts() {
+        const res = await fetch('/api/admin/products');
+        products = await res.json();
+        renderProducts();
+      }
+
+      function renderProducts() {
+        const list = document.getElementById('products-list');
+        list.innerHTML = '';
+        products.forEach(p => {
+          const el = document.createElement('div');
+          el.className = 'card';
+          const symbol = p.currency === 'GHS' ? '₵' : '$';
+          let priceHtml = `${symbol}${p.price.toFixed(2)}`;
+          if (p.discount && p.discount > 0) {
+            const discountedPrice = (p.price * (1 - p.discount / 100)).toFixed(2);
+            priceHtml = `<span style="text-decoration: line-through; color: #999;">${symbol}${p.price.toFixed(2)}</span> <strong style="color: #e91e8c;">${symbol}${discountedPrice} (-${p.discount}%)</strong>`;
+          }
+          el.innerHTML = `
+            <img src="${p.image}" alt="${p.name}" />
+            <h3>${p.name}</h3>
+            <p>${p.description}</p>
+            <div class="meta">
+              <div class="price">
+                ${priceHtml}
+              </div>
+              <div style="font-size:0.9rem;color:#555;margin-top:0.75rem;">Category: ${p.category ? p.category.replace(/-/g, ' ') : 'Uncategorized'}</div>
+              <button data-id="${p.id}" class="edit btn">Edit</button>
+              <button data-id="${p.id}" class="delete btn">Delete</button>
+            </div>
+          `;
+          list.appendChild(el);
+        });
+        document.querySelectorAll('.edit').forEach(b => b.addEventListener('click', e => editProduct(e.target.dataset.id)));
+        document.querySelectorAll('.delete').forEach(b => b.addEventListener('click', e => deleteProduct(e.target.dataset.id)));
+      }
+
+      function editProduct(id) {
+        const p = products.find(x => x.id === id);
+        if (!p) return;
+        editingId = id;
+        document.getElementById('modal-title').textContent = 'Edit Product';
+        document.querySelector('[name=name]').value = p.name;
+        document.querySelector('[name=price]').value = p.price;
+        document.querySelector('[name=currency]').value = p.currency || 'USD';
+        document.querySelector('[name=discount]').value = p.discount || 0;
+        document.querySelector('[name=description]').value = p.description;
+        document.querySelector('[name=image]').value = p.image;
+        document.querySelector('[name=sizes]').value = p.sizes ? p.sizes.join(', ') : '';
+        document.querySelector('[name=colors]').value = p.colors ? p.colors.join(', ') : '';
+        document.getElementById('productCategory').value = p.category ? p.category.toLowerCase().replace(/\s+/g, '-') : '';
+        document.getElementById('product-modal').classList.remove('hidden');
+      }
+
+      document.getElementById('add-product').addEventListener('click', () => {
+        editingId = null;
+        document.getElementById('modal-title').textContent = 'Add Product';
+        document.getElementById('product-form').reset();
+        document.getElementById('product-modal').classList.remove('hidden');
+      });
+
+      document.getElementById('close-modal').addEventListener('click', () => {
+        document.getElementById('product-modal').classList.add('hidden');
+      });
+
+      document.getElementById('product-form').addEventListener('submit', async e => {
+        e.preventDefault();
+        const form = new FormData(e.target);
+        const data = {
+          name: form.get('name'),
+          price: parseFloat(form.get('price')),
+          currency: form.get('currency'),
+          category: form.get('category'),
+          discount: parseInt(form.get('discount')) || 0,
+          description: form.get('description'),
+          image: form.get('image'),
+          sizes: form.get('sizes').split(',').map(s => s.trim()).filter(s => s),
+          colors: form.get('colors').split(',').map(c => c.trim()).filter(c => c)
+        };
+        if (!data.category) {
+          alert('Please select a category for this product.');
+          return;
+        }
+        let res;
+        if (editingId) {
+          res = await fetch(`/api/admin/products/${editingId}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+          });
+        } else {
+          res = await fetch('/api/admin/products', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+          });
+        }
+        if (res.ok) {
+          document.getElementById('product-modal').classList.add('hidden');
+          loadProducts();
+        }
+      });
+
+      async function deleteProduct(id) {
+        if (!confirm('Delete this product?')) return;
+        const res = await fetch(`/api/admin/products/${id}`, { method: 'DELETE' });
+        if (res.ok) loadProducts();
+      }
+
+      document.getElementById('category-form').addEventListener('submit', async e => {
+        e.preventDefault();
+        const name = document.getElementById('categoryName').value.trim();
+        if (!name) return;
+
+        const res = await fetch('/api/admin/categories', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ category: name })
+        });
+
+        const data = await res.json();
+        if (!res.ok) {
+          alert(data.error || 'Unable to add category');
+          return;
+        }
+
+        categories = data.categories;
+        renderCategoryOptions();
+        renderCategoryTags();
+        document.getElementById('categoryName').value = '';
+        alert('Category added successfully');
+      });
+
+      loadCategories();
+      loadProducts();
+    </script>
+  </body>
+</html>

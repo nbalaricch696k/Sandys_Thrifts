@@ -1,0 +1,257 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Sandy's Thrifts</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="site-header sticky-header">
+      <div class="mobile-header">
+        <!-- Hamburger Menu -->
+        <button id="hamburger-menu" class="hamburger-btn">
+          <i class="fas fa-bars"></i>
+        </button>
+        
+        <!-- Centered Logo -->
+        <div class="header-logo">
+          <h1 class="brand-name-mobile">SANDYS THRIFTS</h1>
+        </div>
+        
+        <!-- User Icons -->
+        <div class="header-icons">
+          <button id="user-btn" class="icon-btn">
+            <i class="fas fa-user"></i>
+          </button>
+          <button id="wishlist-btn" class="icon-btn">
+            <i class="fas fa-heart"></i>
+          </button>
+          <button id="cart-btn-mobile" class="icon-btn cart-icon">
+            <i class="fas fa-shopping-bag"></i>
+            <span id="cart-badge" class="cart-badge">0</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Side Navigation Drawer -->
+      <div id="side-drawer" class="side-drawer">
+        <div class="drawer-search">
+          <input type="search" placeholder="Search products..." />
+          <button class="search-btn"><i class="fas fa-search"></i></button>
+        </div>
+        
+        <nav class="drawer-nav">
+          <a href="/" class="nav-link">Home</a>
+          <div class="nav-dropdown">
+            <a href="/category/essentials" class="nav-link">Essentials</a>
+            <button class="dropdown-toggle"><i class="fas fa-chevron-down"></i></button>
+            <div class="dropdown-menu" id="category-dropdown"></div>
+          </div>
+          <a href="/category/jerseys" class="nav-link">Jerseys</a>
+          <a href="/category/t-shirts" class="nav-link">T-Shirts</a>
+          <a href="/category/tracksuits" class="nav-link">Tracksuits</a>
+          <a href="/contact" class="nav-link">Contact Us</a>
+        </nav>
+        
+        <div class="drawer-footer">
+          <div class="social-icons">
+            <a href="#" class="social-link"><i class="fab fa-instagram"></i></a>
+            <a href="#" class="social-link"><i class="fab fa-whatsapp"></i></a>
+            <a href="#" class="social-link"><i class="fab fa-tiktok"></i></a>
+          </div>
+        </div>
+      </div>
+    </header>
+    <div id="store-status" style="text-align:center;padding:6px;background:#ffe6f2;color:#c7175f;font-weight:600;">Loading store status...</div>
+
+    <main>
+      <section class="hero">
+        <video id="heroVideo" class="hero-bg-video" autoplay muted loop playsinline></video>
+        <div class="hero-video"></div>
+        <div class="hero-overlay"></div>
+        <div class="container hero-inner">
+          <div class="hero-copy">
+            <h1>THE SNYTRFS LIFESTYLE</h1>
+            <p class="hero-subtitle">REDEFINING COMFORT WITH A TOUCH OF CLASS</p>
+            <a href="#products" class="btn btn-primary hero-btn">LET'S SHOP</a>
+          </div>
+        </div>
+      </section>
+
+      <section id="videos" class="container video-section">
+        <h2 class="section-title">Featured Videos</h2>
+        <div class="video-grid">
+          <div class="video-item">
+            <video controls poster="https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=400&q=80">
+              <source src="" type="video/mp4">
+              Your browser does not support the video tag.
+            </video>
+            <div class="video-info">
+              <h4>Style Showcase</h4>
+              <p>Discover our latest fashion trends</p>
+            </div>
+          </div>
+          <div class="video-item">
+            <video controls poster="https://images.unsplash.com/photo-1445205170230-053b83016050?w=400&q=80">
+              <source src="" type="video/mp4">
+              Your browser does not support the video tag.
+            </video>
+            <div class="video-info">
+              <h4>Behind the Scenes</h4>
+              <p>See how we curate our collection</p>
+            </div>
+          </div>
+          <div class="video-item">
+            <video controls poster="https://images.unsplash.com/photo-1441984904996-e0b6ba687e04?w=400&q=80">
+              <source src="" type="video/mp4">
+              Your browser does not support the video tag.
+            </video>
+            <div class="video-info">
+              <h4>Customer Stories</h4>
+              <p>Hear from our satisfied customers</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="just-arrived" class="container just-arrived-section">
+        <h2 class="section-title">JUST ARRIVED</h2>
+        <div class="just-arrived-grid">
+          <!-- Products will be dynamically inserted here -->
+        </div>
+      </section>
+
+      <section id="products" class="container">
+        <h2 id="productSectionTitle" class="section-title">Featured Products</h2>
+        <div class="product-showcase">
+          <div class="product-carousel">
+            <div id="product-slideshow" class="slideshow">
+              <!-- Products will be dynamically inserted here -->
+            </div>
+            <button id="prev-btn" class="carousel-btn prev-btn">‹</button>
+            <button id="next-btn" class="carousel-btn next-btn">›</button>
+          </div>
+          <div id="other-products" class="other-products">
+            <!-- Additional products will be displayed here -->
+          </div>
+        </div>
+      </section>
+
+      <section id="about" class="container about">
+        <h3>About our store</h3>
+        <p>We offer timeless pieces at unbeatable prices. Sandy's Thrifts is your destination for quality fashion, sustainably sourced and affordably priced.</p>
+      </section>
+
+      <section id="contact" class="container contact-section">
+        <h3>Get in Touch</h3>
+        <div class="contact-info">
+          <div><strong>Email:</strong> <span id="contactEmail">contact@sandysthrifts.com</span></div>
+          <div><strong>Phone:</strong> <span id="contactPhone">555-0123</span></div>
+          <div><strong>Address:</strong> <span id="contactAddress">123 Main Street, Thrift City, TC 12345</span></div>
+          <div id="contactSocial"></div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="footer-content">
+        <div class="footer-column footer-info">
+          <h4>Information</h4>
+          <ul>
+            <li><a href="#about">About Us</a></li>
+            <li><a href="#contact">Contact Us</a></li>
+            <li><a href="#">FAQ</a></li>
+            <li><a href="#">Refund Policy</a></li>
+            <li><a href="#">Privacy Policy</a></li>
+          </ul>
+        </div>
+        
+        <div class="footer-column footer-account">
+          <h4>Account</h4>
+          <ul>
+            <li><a href="/account">Dashboard</a></li>
+            <li><a href="/account">Account Details</a></li>
+            <li><a href="#">My Cart</a></li>
+            <li><a href="#">My Orders</a></li>
+            <li><a href="#">My Checkouts</a></li>
+            <li><a href="#">My Wishlists</a></li>
+          </ul>
+        </div>
+      </div>
+      
+      <div class="footer-region">
+        <select class="region-select">
+          <option>🇬🇧 £ GBP - United Kingdom</option>
+          <option>🇺🇸 $ USD - United States</option>
+          <option>🇮🇳 ₹ INR - India</option>
+        </select>
+      </div>
+      
+      <div class="footer-copyright">
+        <p>© 2026 SNYTRFS. All rights reserved.</p>
+      </div>
+    </footer>
+
+    <!-- Product detail modal -->
+    <div id="product-modal" class="modal hidden">
+      <div class="modal-card">
+        <button id="close-product" class="modal-close">×</button>
+        <div class="modal-body">
+          <img id="modal-image" src="" alt="product" />
+          <div class="modal-info">
+            <h3 id="modal-title"></h3>
+            <div id="modal-price" class="price"></div>
+            <p id="modal-desc"></p>
+            <div id="modal-variants"></div>
+            <div class="modal-actions">
+              <button id="modal-add" class="btn btn-primary">Add to cart</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Cart modal -->
+    <div id="cart-modal" class="modal hidden">
+      <div class="modal-content cart-card">
+        <button id="close-cart" class="modal-close">×</button>
+        <h2>Your Cart</h2>
+        <div id="cart-items"></div>
+        <div id="cart-total" class="cart-total"></div>
+
+        <h3>Checkout</h3>
+        <form id="checkout-form">
+          <input name="name" placeholder="Full name" required />
+          <input name="email" type="email" placeholder="Email" required />
+          <input name="phone" placeholder="Phone number" required />
+          <input name="address" placeholder="Shipping address" required />
+          <button type="submit" class="btn btn-primary">Pay with Mobile Money</button>
+        </form>
+        <div id="order-result"></div>
+      </div>
+    </div>
+
+    <script>
+      async function updateAuthLinks() {
+        try {
+          const res = await fetch('/api/session');
+          const { loggedIn } = await res.json();
+          const authLinks = document.getElementById('auth-links');
+          if (loggedIn) {
+            authLinks.innerHTML = '<a href="/account">Account</a> | <form method="POST" action="/logout" style="display:inline;"><button type="submit" style="background:none;border:none;color:inherit;text-decoration:underline;cursor:pointer;">Logout</button></form>';
+          } else {
+            authLinks.innerHTML = '<a href="/login">Login</a> | <a href="/register">Register</a>';
+          }
+        } catch (error) {
+          console.error('Error checking session:', error);
+        }
+      }
+      updateAuthLinks();
+    </script>
+    <script src="app.js"></script>
+  </body>
+</html>

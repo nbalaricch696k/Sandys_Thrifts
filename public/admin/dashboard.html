@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Admin Dashboard - Sandy's Thrifts</title>
+    <link rel="stylesheet" href="../styles.css" />
+    <style>
+      .dashboard-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 2rem;
+        margin: 2rem 0;
+      }
+      .card {
+        background: white;
+        padding: 2rem;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        text-decoration: none;
+        color: #333;
+        transition: transform 0.3s, box-shadow 0.3s;
+      }
+      .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      }
+      .card h3 {
+        font-size: 1.3rem;
+        margin-bottom: 0.5rem;
+        color: #2c3e50;
+      }
+      .card p {
+        color: #666;
+        font-size: 0.95rem;
+      }
+      .card-icon {
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
+      }
+    </style>
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="container header-row">
+        <div class="brand">
+          <div class="brand-name">Admin Panel</div>
+        </div>
+        <nav class="nav">
+          <a href="/admin/orders">Orders</a>
+          <a href="/admin/products">Products</a>
+          <a href="/admin/users">Users</a>
+          <a href="/admin/accounts">Accounts</a>
+          <a href="/admin/settings">Settings</a>
+          <a href="/">Back to Store</a>
+          <form method="POST" action="/admin/logout" style="display:inline;">
+            <button type="submit" style="background:none;border:none;color:#666;text-decoration:underline;cursor:pointer;">Logout</button>
+          </form>
+        </nav>
+      </div>
+    </header>
+
+    <main class="container">
+      <h2>Dashboard</h2>
+      <p>Welcome to the admin panel. Manage your store below.</p>
+
+      <div class="dashboard-grid">
+        <a href="/admin/orders" class="card">
+          <div class="card-icon">📦</div>
+          <h3>Manage Orders</h3>
+          <p>Review customer orders, confirm shipments, and send thank you emails with delivery estimates.</p>
+        </a>
+        <a href="/admin/products" class="card">
+          <div class="card-icon">👕</div>
+          <h3>Manage Products</h3>
+          <p>Add, edit, or delete products from your inventory.</p>
+        </a>
+        <a href="/admin/users" class="card">
+          <div class="card-icon">👥</div>
+          <h3>Manage Users</h3>
+          <p>View registered users, their profiles, and order history.</p>
+        </a>
+        <a href="/admin/settings" class="card">
+          <div class="card-icon">⚙️</div>
+          <h3>Settings</h3>
+          <p>Change your login credentials, customize store name, and add contact information.</p>
+        </a>
+      </div>
+    </main>
+  </body>
+</html>

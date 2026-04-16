@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>User Management</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #f5f5f5;
+      color: #333;
+    }
+
+    header {
+      background: #2c3e50;
+      color: white;
+      padding: 1rem 2rem;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    header h1 {
+      font-size: 1.5rem;
+      margin-bottom: 0.5rem;
+    }
+
+    nav {
+      display: flex;
+      gap: 2rem;
+      margin-top: 1rem;
+    }
+
+    nav a {
+      color: white;
+      text-decoration: none;
+      padding: 0.5rem 1rem;
+      border-radius: 4px;
+      transition: background 0.3s;
+    }
+
+    nav a:hover {
+      background: rgba(255,255,255,0.1);
+    }
+
+    nav a.active {
+      background: #e91e8c;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 2rem auto;
+      padding: 0 1rem;
+    }
+
+    .users-table {
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      overflow: hidden;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    th, td {
+      padding: 1rem;
+      text-align: left;
+      border-bottom: 1px solid #eee;
+    }
+
+    th {
+      background: #f8f9fa;
+      font-weight: 600;
+      color: #2c3e50;
+    }
+
+    tr:hover {
+      background: #f8f9fa;
+    }
+
+    .btn {
+      padding: 0.5rem 1rem;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      text-decoration: none;
+      display: inline-block;
+      transition: background 0.3s;
+    }
+
+    .btn-primary {
+      background: #e91e8c;
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: #c71570;
+    }
+
+    .btn-secondary {
+      background: #6c757d;
+      color: white;
+    }
+
+    .btn-secondary:hover {
+      background: #545b62;
+    }
+
+    .user-details {
+      margin-top: 2rem;
+      background: white;
+      padding: 2rem;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      display: none;
+    }
+
+    .user-details.show {
+      display: block;
+    }
+
+    .user-details h3 {
+      margin-bottom: 1rem;
+      color: #2c3e50;
+    }
+
+    .orders-list {
+      margin-top: 1rem;
+    }
+
+    .order-item {
+      padding: 1rem;
+      border: 1px solid #eee;
+      border-radius: 4px;
+      margin-bottom: 0.5rem;
+      background: #f9f9f9;
+    }
+
+    .loading {
+      text-align: center;
+      padding: 2rem;
+      color: #666;
+    }
+
+    @media (max-width: 768px) {
+      nav {
+        flex-wrap: wrap;
+        gap: 1rem;
+      }
+
+      th, td {
+        padding: 0.5rem;
+        font-size: 0.9rem;
+      }
+
+      .container {
+        margin: 1rem auto;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>User Management</h1>
+    <nav>
+      <a href="/admin/dashboard">Dashboard</a>
+      <a href="/admin/orders">Orders</a>
+      <a href="/admin/products">Products</a>
+      <a href="/admin/users" class="active">Users</a>
+      <a href="/admin/accounts">Accounts</a>
+      <a href="/admin/settings">Settings</a>
+      <a href="/" target="_blank">View Store</a>
+    </nav>
+  </header>
+
+  <div class="container">
+    <div class="users-table">
+      <table id="usersTable">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Orders</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="usersTableBody">
+          <tr>
+            <td colspan="5" class="loading">Loading users...</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div id="userDetails" class="user-details">
+      <h3 id="userName"></h3>
+      <p><strong>Email:</strong> <span id="userEmail"></span></p>
+      <p><strong>Orders Count:</strong> <span id="userOrdersCount"></span></p>
+      <div class="orders-list" id="userOrders"></div>
+    </div>
+  </div>
+
+  <script>
+    let users = [];
+
+    async function loadUsers() {
+      try {
+        const response = await fetch('/api/admin/users');
+        if (!response.ok) throw new Error('Failed to load users');
+        users = await response.json();
+        renderUsersTable();
+      } catch (error) {
+        console.error('Error loading users:', error);
+        document.getElementById('usersTableBody').innerHTML = '<tr><td colspan="5" style="text-align: center; color: red;">Error loading users</td></tr>';
+      }
+    }
+
+    function renderUsersTable() {
+      const tbody = document.getElementById('usersTableBody');
+      if (users.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="5" style="text-align: center;">No users found</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = users.map(user => `
+        <tr>
+          <td>${user.id}</td>
+          <td>${user.name}</td>
+          <td>${user.email}</td>
+          <td>${user.ordersCount}</td>
+          <td>
+            <button class="btn btn-primary" onclick="viewUserDetails(${user.id})">View Details</button>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    async function viewUserDetails(userId) {
+      try {
+        const response = await fetch(`/api/admin/users/${userId}`);
+        if (!response.ok) throw new Error('Failed to load user details');
+        const user = await response.json();
+
+        document.getElementById('userName').textContent = user.name;
+        document.getElementById('userEmail').textContent = user.email;
+        document.getElementById('userOrdersCount').textContent = user.orders.length;
+
+        const ordersHtml = user.orders.length > 0
+          ? user.orders.map(order => `
+              <div class="order-item">
+                <p><strong>Order ID:</strong> ${order.id}</p>
+                <p><strong>Date:</strong> ${new Date(order.createdAt).toLocaleDateString()}</p>
+                <p><strong>Status:</strong> ${order.status}</p>
+                <p><strong>Items:</strong> ${order.items.map(item => `${item.name} x${item.quantity}`).join(', ')}</p>
+                <p><strong>Total:</strong> $${order.items.reduce((sum, item) => sum + (item.price * item.quantity), 0).toFixed(2)}</p>
+              </div>
+            `).join('')
+          : '<p>No orders yet</p>';
+
+        document.getElementById('userOrders').innerHTML = ordersHtml;
+        document.getElementById('userDetails').classList.add('show');
+        document.getElementById('userDetails').scrollIntoView({ behavior: 'smooth' });
+      } catch (error) {
+        console.error('Error loading user details:', error);
+        alert('Error loading user details');
+      }
+    }
+
+    // Load users on page load
+    loadUsers();
+  </script>
+</body>
+</html>

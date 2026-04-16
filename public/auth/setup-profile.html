@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Complete Your Profile - SANDYS THRIFTS</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../styles.css">
+  <style>
+    body {
+      background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+    }
+
+    .container {
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+      padding: 2rem;
+      max-width: 420px;
+      width: 100%;
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 0.5rem;
+      font-size: 1.5rem;
+      color: #333;
+    }
+
+    .subtitle {
+      text-align: center;
+      color: var(--grey);
+      margin-bottom: 2rem;
+      font-size: 0.9rem;
+    }
+
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+
+    label {
+      font-weight: 600;
+      display: block;
+      margin-bottom: 0.5rem;
+      color: #333;
+      font-size: 0.95rem;
+    }
+
+    input {
+      width: 100%;
+      padding: 0.75rem;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 1rem;
+      font-family: inherit;
+      transition: border-color 0.3s ease;
+    }
+
+    input:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(65, 88, 208, 0.1);
+    }
+
+    .help-text {
+      font-size: 0.8rem;
+      color: var(--grey);
+      margin-top: 0.3rem;
+    }
+
+    button {
+      width: 100%;
+      padding: 0.75rem;
+      background: var(--primary);
+      color: white;
+      border: none;
+      border-radius: 50px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-size: 0.95rem;
+    }
+
+    button:hover {
+      background: #3848bb;
+      transform: translateY(-2px);
+    }
+
+    .error {
+      background: #f8d7da;
+      color: #721c24;
+      padding: 0.75rem;
+      border-radius: 8px;
+      margin-bottom: 1rem;
+      font-size: 0.9rem;
+      display: none;
+    }
+
+    .error.show {
+      display: block;
+    }
+
+    @media (max-width: 480px) {
+      .container {
+        padding: 1.5rem 1rem;
+      }
+
+      h2 {
+        font-size: 1.3rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Choose Your Username</h2>
+    <p class="subtitle">Create a unique username for your SANDYS THRIFTS account</p>
+
+    <div id="error" class="error"></div>
+
+    <form id="profileForm" method="POST" action="/auth/create-profile">
+      <div class="form-group">
+        <label for="username">Username</label>
+        <input 
+          type="text" 
+          id="username" 
+          name="username" 
+          placeholder="your_username" 
+          required 
+          minlength="3"
+          maxlength="20"
+          pattern="[a-zA-Z0-9_]+"
+        />
+        <p class="help-text">3-20 characters, letters, numbers, and underscore only</p>
+      </div>
+
+      <button type="submit">Create Account</button>
+    </form>
+  </div>
+
+  <script>
+    document.getElementById('profileForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const errorDiv = document.getElementById('error');
+      const username = document.getElementById('username').value;
+
+      // Validate username format
+      if (!/^[a-zA-Z0-9_]+$/.test(username)) {
+        errorDiv.textContent = 'Username can only contain letters, numbers, and underscores';
+        errorDiv.classList.add('show');
+        return;
+      }
+
+      try {
+        const response = await fetch('/auth/create-profile', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: `username=${encodeURIComponent(username)}`
+        });
+
+        if (!response.ok) {
+          const text = await response.text();
+          errorDiv.textContent = text || 'Failed to create profile';
+          errorDiv.classList.add('show');
+          return;
+        }
+
+        // Redirect on success
+        window.location.href = '/';
+      } catch (error) {
+        errorDiv.textContent = 'An error occurred. Please try again.';
+        errorDiv.classList.add('show');
+      }
+    });
+  </script>
+</body>
+</html>
